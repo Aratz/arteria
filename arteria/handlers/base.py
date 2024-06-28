@@ -2,9 +2,9 @@
 Base routes that should be included in all services
 """
 
-import importlib.metadata
-
 from aiohttp import web
+
+from arteria import __version__
 
 
 base_routes = web.RouteTableDef()
@@ -16,5 +16,5 @@ async def version(request):
     Returns service version in use
     """
     return web.json_response(
-        {"version": importlib.metadata.version("arteria")}
+        {"version": __version__}
     )

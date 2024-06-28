@@ -1,9 +1,9 @@
-import importlib.metadata
 from pathlib import Path
 import tempfile
 
 import pytest
 
+from arteria import __version__
 from arteria.services.arteria_runfolder import get_app
 
 
@@ -29,7 +29,7 @@ async def test_version(client):
         assert resp.status == 200
         content = await resp.json()
 
-    assert content == {"version": importlib.metadata.version("arteria")}
+    assert content == {"version": __version__}
 
 
 async def test_post_runfolders_path(client, config):
