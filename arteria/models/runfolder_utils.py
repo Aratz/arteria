@@ -6,6 +6,7 @@ import time
 import xmltodict
 
 from arteria.models.state import State
+from arteria.models.config import Config
 
 
 log = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ class Runfolder():
     """
     A class to manipulate runfolders on disk
     """
-    def __init__(self, path, grace_minutes=0):
+    def __init__(self, path):
         self.path = Path(path)
 
         assert self.path.is_dir()
@@ -39,7 +40,10 @@ class Runfolder():
         marker_file = Instrument(self.run_parameters).completed_marker_file
         assert (
             marker_file.exists()
-            and time.time() - os.path.getmtime(marker_file) > grace_minutes * 60
+            and (
+                time.time() - os.path.getmtime(marker_file)
+                > Config().get("completed_marker_grace_minutes", 0) * 60
+            )
         )
 
         (self.path / ".arteria").mkdir(exist_ok=True)

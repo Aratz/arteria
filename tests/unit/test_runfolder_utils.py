@@ -7,6 +7,7 @@ import unittest.mock as mock
 
 from arteria.models.runfolder_utils import list_runfolders, Runfolder, Instrument
 from arteria.models.state import State
+from arteria.models.config import Config
 
 
 @pytest.fixture()
@@ -79,8 +80,13 @@ class TestRunfolder():
                 Runfolder(regular_folder)
 
     def test_init_young_runfolder(self, runfolder):
+        Config.new({
+            "completed_marker_grace_minutes": 60,
+        })
         with pytest.raises(AssertionError):
-            Runfolder(runfolder.path, grace_minutes=60)
+            Runfolder(runfolder.path)
+
+        del Config._instance
 
     def test_get_state(self, runfolder):
         assert runfolder.state == State.STARTED
