@@ -16,6 +16,9 @@ def list_runfolders(path, filter_key=lambda r: True):
 
 
 class Runfolder():
+    """
+    A class to manipulate runfolders on disk
+    """
     def __init__(self, path, grace_minutes=0):
         self.path = Path(path)
 
@@ -30,8 +33,8 @@ class Runfolder():
                 if path.exists()
             )
             self.run_parameters = xmltodict.parse(run_parameter_file.read_text())["RunParameters"]
-        except StopIteration:
-            raise AssertionError("File [Rr]unParameters.xml not found in runfolder {path}")
+        except StopIteration as exc:
+            raise AssertionError("File [Rr]unParameters.xml not found in runfolder {path}") from exc
 
         marker_file = Instrument(self.run_parameters).completed_marker_file
         assert (
@@ -55,6 +58,14 @@ class Runfolder():
 
     @property
     def metadata(self):
+        """
+        Extract metadata from the runparameter file
+
+        Returns
+        -------
+            metadata: a dict containing up to two keys: "reagent_kit_barcode"
+            and "library_tube_barcode"
+        """
         if not self.run_parameters:
             log.warning(f"No metadata found for runfolder {self.path}")
 
